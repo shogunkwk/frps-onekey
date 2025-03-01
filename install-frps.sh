@@ -544,4 +544,536 @@ pre_install_frps() {
     case "${str_log_level}" in
         1|[Ii][Nn][Ff][Oo]) str_log_level="info";;
         2|[Ww][Aa][Rr][Nn]) str_log_level="warn";;
-        3|[Ee][​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
+        3|[Ee][Rr][Rr][Oo][Rr]) str_log_level="error";;
+        4|[Dd][Ee][Bb][Uu][Gg]) str_log_level="debug";;
+        5|[Tt][Rr][Aa][Cc][Ee]) str_log_level="trace";;
+        [eE][xX][iI][tT]) exit 1;;
+        *) str_log_level="info";;
+    esac
+    echo -e "log_level: ${COLOR_YELLOW}${str_log_level}${COLOR_END}"
+    echo -e ""
+
+    fun_input_log_max_days
+    echo -e "${program_name} log_max_days: ${COLOR_YELLOW}${set_log_max_days}${COLOR_END}"
+    echo -e ""
+
+    echo -e "Please select ${COLOR_GREEN}log_file${COLOR_END}"
+    echo "1: enable (default)"
+    echo "2: disable"
+    echo "-------------------------"
+    read -e -p "Enter your choice (1, 2 or exit. default [1]): " str_log_file
+    case "${str_log_file}" in
+        1|[yY]|[yY][eE][sS]|[oO][nN]|[tT][rR][uU][eE]|[eE][nN][aA][bB][lL][eE])
+            str_log_file="./frps.log"
+            str_log_file_flag="enable"
+            ;;
+        0|2|[nN]|[nN][oO]|[oO][fF][fF]|[fF][aA][lL][sS][eE]|[dD][iI][sS][aA][bB][lL][eE])
+            str_log_file="/dev/null"
+            str_log_file_flag="disable"
+            ;;
+        [eE][xX][iI][tT]) exit 1;;
+        *) str_log_file="./frps.log"; str_log_file_flag="enable";;
+    esac
+    echo -e "log_file: ${COLOR_YELLOW}${str_log_file_flag}${COLOR_END}"
+    echo -e ""
+
+    echo -e "Please select ${COLOR_GREEN}tcp_mux${COLOR_END}"
+    echo "1: enable (default)"
+    echo "2: disable"
+    echo "-------------------------"
+    read -e -p "Enter your choice (1, 2 or exit. default [1]): " str_tcp_mux
+    case "${str_tcp_mux}" in
+        1|[yY]|[yY][eE][sS]|[oO][nN]|[tT][rR][uU][eE]|[eE][nN][aA][bB][lL][eE])
+            set_tcp_mux="true"
+            ;;
+        0|2|[nN]|[nN][oO]|[oO][fF][fF]|[fF][aA][lL][sS][eE]|[dD][iI][sS][aA][bB][lL][eE])
+            set_tcp_mux="false"
+            ;;
+        [eE][xX][iI][tT]) exit 1;;
+        *) set_tcp_mux="true";;
+    esac
+    echo -e "tcp_mux: ${COLOR_YELLOW}${set_tcp_mux}${COLOR_END}"
+    echo -e ""
+
+    echo -e "Please select ${COLOR_GREEN}transport protocol support${COLOR_END}"
+    echo "1: enable (default)"
+    echo "2: disable"
+    echo "-------------------------"
+    read -e -p "Enter your choice (1, 2 or exit. default [1]): " str_transport_protocol
+    case "${str_transport_protocol}" in
+        1|[yY]|[yY][eE][sS]|[oO][nN]|[tT][rR][uU][eE]|[eE][nN][aA][bB][lL][eE])
+            set_transport_protocol="enable"
+            fun_input_kcp_bind_port
+            fun_input_quic_bind_port
+            ;;
+        0|2|[nN]|[nN][oO]|[oO][fF][fF]|[fF][aA][lL][sS][eE]|[dD][iI][sS][aA][bB][lL][eE])
+            set_transport_protocol="disable"
+            set_kcp_bind_port=0
+            set_quic_bind_port=0
+            ;;
+        [eE][xX][iI][tT]) exit 1;;
+        *) set_transport_protocol="enable"
+           fun_input_kcp_bind_port
+           fun_input_quic_bind_port
+           ;;
+    esac
+    echo -e "transport protocol support: ${COLOR_YELLOW}${set_transport_protocol}${COLOR_END}"
+    echo -e ""
+
+    echo "============== Check your input =============="
+    echo -e "Your Server IP      : ${COLOR_GREEN}${defIP}${COLOR_END}"
+    echo -e "Bind port          : ${COLOR_GREEN}${set_bind_port}${COLOR_END}"
+    echo -e "vhost HTTP port    : ${COLOR_GREEN}${set_vhost_http_port}${COLOR_END}"
+    echo -e "vhost HTTPS port   : ${COLOR_GREEN}${set_vhost_https_port}${COLOR_END}"
+    echo -e "Dashboard port     : ${COLOR_GREEN}${set_dashboard_port}${COLOR_END}"
+    echo -e "Dashboard user     : ${COLOR_GREEN}${set_dashboard_user}${COLOR_END}"
+    echo -e "Dashboard password : ${COLOR_GREEN}${set_dashboard_pwd}${COLOR_END}"
+    echo -e "Token              : ${COLOR_GREEN}${set_token}${COLOR_END}"
+    echo -e "Subdomain host     : ${COLOR_GREEN}${set_subdomain_host}${COLOR_END}"
+    echo -e "TCP mux            : ${COLOR_GREEN}${set_tcp_mux}${COLOR_END}"
+    echo -e "Max Pool count     : ${COLOR_GREEN}${set_max_pool_count}${COLOR_END}"
+    echo -e "Log level          : ${COLOR_GREEN}${str_log_level}${COLOR_END}"
+    echo -e "Log max days       : ${COLOR_GREEN}${set_log_max_days}${COLOR_END}"
+    echo -e "Log file           : ${COLOR_GREEN}${str_log_file_flag}${COLOR_END}"
+    echo -e "Transport protocol : ${COLOR_GREEN}${set_transport_protocol}${COLOR_END}"
+    echo -e "KCP bind port      : ${COLOR_GREEN}${set_kcp_bind_port}${COLOR_END}"
+    echo -e "QUIC bind port     : ${COLOR_GREEN}${set_quic_bind_port}${COLOR_END}"
+    echo "=============================================="
+    echo ""
+    echo "Press any key to start... or Press Ctrl+C to cancel"
+    char=$(get_char)
+    install_program_server_frps
+}
+
+# Install frps server
+install_program_server_frps() {
+    [ ! -d "$str_program_dir" ] && mkdir -p "$str_program_dir"
+    cd "$str_program_dir" || exit 1
+    echo "${program_name} install path: $PWD"
+
+    echo -n "Configuring ${program_name}..."
+    cat << EOF > "${str_program_dir}/${program_config_file}"
+bindAddr = "0.0.0.0"
+bindPort = ${set_bind_port}
+
+# UDP port used for KCP protocol, can be same as 'bindPort'.
+# If not set, KCP is disabled in frps.
+kcpBindPort = ${set_kcp_bind_port}
+
+# UDP port used for QUIC protocol.
+# If not set, QUIC is disabled in frps.
+quicBindPort = ${set_quic_bind_port}
+
+# Heartbeat configure, not recommended to modify the default value
+transport.heartbeatTimeout = 90
+
+# Pool count in each proxy will keep no more than maxPoolCount.
+transport.maxPoolCount = ${set_max_pool_count}
+
+# If TCP stream multiplexing is used, default is true
+transport.tcpMux = ${set_tcp_mux}
+
+# If you want to support virtual host, you must set the HTTP/HTTPS ports (optional)
+vhostHTTPPort = ${set_vhost_http_port}
+vhostHTTPSPort = ${set_vhost_https_port}
+
+# Configure the web server to enable the dashboard for frps.
+webServer.addr = "0.0.0.0"
+webServer.port = ${set_dashboard_port}
+webServer.user = "${set_dashboard_user}"
+webServer.password = "${set_dashboard_pwd}"
+
+# Console or real log file path
+log.to = "${str_log_file_flag}"
+# Log level: trace, debug, info, warn, error
+log.level = "${str_log_level}"
+log.maxDays = ${set_log_max_days}
+
+# Authentication method
+auth.method = "token"
+auth.token = "${set_token}"
+
+# Subdomain host for HTTP/HTTPS proxies
+subDomainHost = "${set_subdomain_host}"
+EOF
+    echo " done"
+
+    echo -n "Downloading ${program_name}..."
+    rm -f "${str_program_dir}/${program_name}" "$program_init"
+    fun_download_file
+    echo " done"
+
+    echo -n "Downloading ${program_init}..."
+    if [ ! -s "$program_init" ]; then
+        if ! wget -q "$FRPS_INIT" -O "$program_init"; then
+            echo -e " ${COLOR_RED}failed${COLOR_END}"
+            exit 1
+        fi
+    fi
+    [ ! -x "$program_init" ] && chmod +x "$program_init"
+    echo " done"
+
+    echo -n "Setting ${program_name} to start on boot..."
+    if [ -d /etc/systemd/system ]; then
+        # systemd 支持
+        cat << EOF > /etc/systemd/system/${program_name}.service
+[Unit]
+Description=FRP Server Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=${str_program_dir}/${program_name} -c ${str_program_dir}/${program_config_file}
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+        systemctl daemon-reload
+        systemctl enable "$program_name"
+        systemctl start "$program_name"
+    elif [ "$OS" == 'CentOS' ] || [ "$OS" == 'RHEL' ] || [ "$OS" == 'Rocky' ] || [ "$OS" == 'AlmaLinux' ]; then
+        chmod +x "$program_init"
+        chkconfig --add "$program_name"
+        "$program_init" start
+    else
+        chmod +x "$program_init"
+        update-rc.d -f "$program_name" defaults
+        "$program_init" start
+    fi
+    echo " done"
+
+    # Verify service is running
+    if [ -d /etc/systemd/system ]; then
+        if systemctl is-active --quiet "$program_name"; then
+            echo -e "${COLOR_GREEN}
+┌─────────────────────────────────────────┐
+│   ${program_name} service started successfully.     │
+└─────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│  Installation completed successfully.   │
+└─────────────────────────────────────────┘${COLOR_END}"
+        else
+            echo -e "${COLOR_RED}
+┌─────────────────────────────────────────┐
+│   ${program_name} service failed to start.          │
+└─────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│ Installation failed, please re-install. │
+└─────────────────────────────────────────┘${COLOR_END}"
+            exit 1
+        fi
+    elif pgrep -x "$program_name" >/dev/null; then
+        echo -e "${COLOR_GREEN}
+┌─────────────────────────────────────────┐
+│   ${program_name} service started successfully.     │
+└─────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│  Installation completed successfully.   │
+└─────────────────────────────────────────┘${COLOR_END}"
+    else
+        echo -e "${COLOR_RED}
+┌─────────────────────────────────────────┐
+│   ${program_name} service failed to start.          │
+└─────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│ Installation failed, please re-install. │
+└─────────────────────────────────────────┘${COLOR_END}"
+        exit 1
+    fi
+
+    echo ""
+    echo "Congratulations, ${program_name} install completed!"
+    echo "================================================"
+    echo -e "Your Server IP      : ${COLOR_GREEN}${defIP}${COLOR_END}"
+    echo -e "Bind port          : ${COLOR_GREEN}${set_bind_port}${COLOR_END}"
+    echo -e "vhost HTTP port    : ${COLOR_GREEN}${set_vhost_http_port}${COLOR_END}"
+    echo -e "vhost HTTPS port   : ${COLOR_GREEN}${set_vhost_https_port}${COLOR_END}"
+    echo -e "Token              : ${COLOR_GREEN}${set_token}${COLOR_END}"
+    echo -e "Subdomain host     : ${COLOR_GREEN}${set_subdomain_host}${COLOR_END}"
+    echo -e "TCP mux            : ${COLOR_GREEN}${set_tcp_mux}${COLOR_END}"
+    echo -e "Max Pool count     : ${COLOR_GREEN}${set_max_pool_count}${COLOR_END}"
+    echo -e "Log level          : ${COLOR_GREEN}${str_log_level}${COLOR_END}"
+    echo -e "Log max days       : ${COLOR_GREEN}${set_log_max_days}${COLOR_END}"
+    echo -e "Log file           : ${COLOR_GREEN}${str_log_file_flag}${COLOR_END}"
+    echo -e "Transport protocol : ${COLOR_GREEN}${set_transport_protocol}${COLOR_END}"
+    echo -e "KCP bind port      : ${COLOR_GREEN}${set_kcp_bind_port}${COLOR_END}"
+    echo -e "QUIC bind port     : ${COLOR_GREEN}${set_quic_bind_port}${COLOR_END}"
+    echo "================================================"
+    echo -e "${program_name} Dashboard     : ${COLOR_GREEN}http://${set_subdomain_host}:${set_dashboard_port}/${COLOR_END}"
+    echo -e "Dashboard port     : ${COLOR_GREEN}${set_dashboard_port}${COLOR_END}"
+    echo -e "Dashboard user     : ${COLOR_GREEN}${set_dashboard_user}${COLOR_END}"
+    echo -e "Dashboard password : ${COLOR_GREEN}${set_dashboard_pwd}${COLOR_END}"
+    echo "================================================"
+    echo ""
+    echo -e "${program_name} status manage : ${COLOR_PINKBACK_WHITEFONT}${program_name}${COLOR_END} {${COLOR_GREEN}start|stop|restart|status|config|version${COLOR_END}}"
+    echo -e "Example:"
+    echo -e "  start: ${COLOR_PINK}${program_name}${COLOR_END} ${COLOR_GREEN}start${COLOR_END}"
+    echo -e "   stop: ${COLOR_PINK}${program_name}${COLOR_END} ${COLOR_GREEN}stop${COLOR_END}"
+    echo -e "restart: ${COLOR_PINK}${program_name}${COLOR_END} ${COLOR_GREEN}restart${COLOR_END}"
+    exit 0
+}
+
+# Configure frps
+configure_program_server_frps() {
+    if [ -s "${str_program_dir}/${program_config_file}" ]; then
+        vi "${str_program_dir}/${program_config_file}"
+    else
+        echo -e "${COLOR_RED}${program_name} configuration file not found!${COLOR_END}" >&2
+        exit 1
+    fi
+}
+
+# Uninstall frps
+uninstall_program_server_frps() {
+    fun_frps
+    if [ -s "$program_init" ] || [ -s "${str_program_dir}/${program_name}" ]; then
+        echo "============== Uninstall ${program_name} =============="
+        read -e -p "${COLOR_YELLOW}Do you want to uninstall? [Y/N]:${COLOR_END} " str_uninstall
+        case "${str_uninstall}" in
+            [yY]|[yY][eE][sS])
+                echo ""
+                echo "You selected [Yes], press any key to continue."
+                char=$(get_char)
+
+                # Stop frps server
+                if [ -d /etc/systemd/system ]; then
+                    systemctl stop "$program_name" 2>/dev/null || true
+                    systemctl disable "$program_name" 2>/dev/null || true
+                    rm -f "/etc/systemd/system/${program_name}.service"
+                    systemctl daemon-reload
+                else
+                    "$program_init" stop 2>/dev/null || true
+                fi
+
+                rm -f "$program_init" "/var/run/${program_name}.pid" "/usr/bin/${program_name}"
+                rm -fr "$str_program_dir"
+                echo -e "${COLOR_GREEN}${program_name} uninstall successful!${COLOR_END}"
+                ;;
+            *)
+                echo ""
+                echo -e "${COLOR_YELLOW}You selected [No], shell exiting!${COLOR_END}"
+                ;;
+        esac
+    else
+        echo -e "${COLOR_YELLOW}${program_name} is not installed!${COLOR_END}"
+    fi
+    exit 0
+}
+
+# Update frps configuration
+update_config_frps() {
+    if [ ! -r "${str_program_dir}/${program_config_file}" ]; then
+        echo -e "${COLOR_RED}Config file ${str_program_dir}/${program_config_file} not found.${COLOR_END}" >&2
+        exit 1
+    fi
+
+    local search_dashboard_user=$(grep "^dashboard_user" "${str_program_dir}/${program_config_file}")
+    local search_dashboard_pwd=$(grep "^dashboard_pwd" "${str_program_dir}/${program_config_file}")
+    local search_kcp_bind_port=$(grep "^kcp_bind_port" "${str_program_dir}/${program_config_file}")
+    local search_quic_bind_port=$(grep "^quic_bind_port" "${str_program_dir}/${program_config_file}")
+    local search_tcp_mux=$(grep "^tcp_mux" "${str_program_dir}/${program_config_file}")
+    local search_token=$(grep "privilege_token" "${str_program_dir}/${program_config_file}")
+    local search_allow_ports=$(grep "privilege_allow_ports" "${str_program_dir}/${program_config_file}")
+
+    if [ -z "$search_dashboard_user" ] || [ -z "$search_dashboard_pwd" ] || [ -z "$search_kcp_bind_port" ] || [ -z "$search_quic_bind_port" ] || [ -z "$search_tcp_mux" ] || [ ! -z "$search_token" ] || [ ! -z "$search_allow_ports" ]; then
+        echo -e "${COLOR_GREEN}Configuration files need to be updated, now setting:${COLOR_END}"
+        echo ""
+
+        if [ ! -z "$search_token" ]; then
+            sed -i "s/privilege_token/token/" "${str_program_dir}/${program_config_file}"
+        fi
+
+        if [ -z "$search_dashboard_user" ] && [ -z "$search_dashboard_pwd" ]; then
+            local def_dashboard_user_update="admin"
+            read -e -p "Please input dashboard_user (Default: ${def_dashboard_user_update}):" set_dashboard_user_update
+            [ -z "$set_dashboard_user_update" ] && set_dashboard_user_update="$def_dashboard_user_update"
+            echo "${program_name} dashboard_user: ${set_dashboard_user_update}"
+            echo ""
+
+            local def_dashboard_pwd_update=$(fun_randstr 8)
+            read -e -p "Please input dashboard_pwd (Default: ${def_dashboard_pwd_update}):" set_dashboard_pwd_update
+            [ -z "$set_dashboard_pwd_update" ] && set_dashboard_pwd_update="$def_dashboard_pwd_update"
+            echo "${program_name} dashboard_pwd: ${set_dashboard_pwd_update}"
+            echo ""
+
+            sed -i "/dashboard_port =.*/a\dashboard_user = ${set_dashboard_user_update}\ndashboard_pwd = ${set_dashboard_pwd_update}\n" "${str_program_dir}/${program_config_file}"
+        fi
+
+        if [ -z "$search_kcp_bind_port" ]; then
+            echo -e "${COLOR_GREEN}Please select transport protocol support${COLOR_END}"
+            echo "1: enable (default)"
+            echo "2: disable"
+            echo "-------------------------"
+            read -e -p "Enter your choice (1, 2 or exit. default [1]): " str_transport_protocol
+            case "${str_transport_protocol}" in
+                1|[yY]|[yY][eE][sS]|[oO][nN]|[tT][rR][uU][eE]|[eE][nN][aA][bB][lL][eE])
+                    set_transport_protocol="enable"
+                    ;;
+                0|2|[nN]|[nN][oO]|[oO][fF][fF]|[fF][aA][lL][sS][eE]|[dD][iI][sS][aA][bB][lL][eE])
+                    set_transport_protocol="disable"
+                    ;;
+                [eE][xX][iI][tT]) exit 1;;
+                *) set_transport_protocol="enable";;
+            esac
+            local def_kcp_bind_port=$(grep "^bind_port" "${str_program_dir}/${program_config_file}" | cut -d'=' -f2 | tr -d '[:space:]')
+            if [[ "$set_transport_protocol" == "disable" ]]; then
+                sed -i "/^bind_port =.*/a\# UDP port used for transport protocol, can be same with 'bind_port'\n# If not set, transport protocol is disabled in frps\n#kcp_bind_port = ${def_kcp_bind_port}\n" "${str_program_dir}/${program_config_file}"
+            else
+                sed -i "/^bind_port =.*/a\# UDP port used for transport protocol, can be same with 'bind_port'\n# If not set, KCP is disabled in frps\nkcp_bind_port = ${def_kcp_bind_port}\n" "${str_program_dir}/${program_config_file}"
+            fi
+        fi
+
+        if [ -z "$search_tcp_mux" ]; then
+            echo -e "${COLOR_GREEN}Please select tcp_mux${COLOR_END}"
+            echo "1: enable (default)"
+            echo "2: disable"
+            echo "-------------------------"
+            read -e -p "Enter your choice (1, 2 or exit. default [1]): " str_tcp_mux
+            case "${str_tcp_mux}" in
+                1|[yY]|[yY][eE][sS]|[oO][nN]|[tT][rR][uU][eE]|[eE][nN][aA][bB][lL][eE])
+                    set_tcp_mux="true"
+                    ;;
+                0|2|[nN]|[nN][oO]|[oO][fF][fF]|[fF][aA][lL][sS][eE]|[dD][iI][sS][aA][bB][lL][eE])
+                    set_tcp_mux="false"
+                    ;;
+                [eE][xX][iI][tT]) exit 1;;
+                *) set_tcp_mux="true";;
+            esac
+            sed -i "/^privilege_mode = true/d" "${str_program_dir}/${program_config_file}"
+            sed -i "/^token =.*/a\# If TCP stream multiplexing is used, default is true\ntcp_mux = ${set_tcp_mux}\n" "${str_program_dir}/${program_config_file}"
+        fi
+
+        if [ ! -z "$search_allow_ports" ]; then
+            sed -i "s/privilege_allow_ports/allow_ports/" "${str_program_dir}/${program_config_file}"
+        fi
+
+        local verify_dashboard_user=$(grep "^dashboard_user" "${str_program_dir}/${program_config_file}")
+        local verify_dashboard_pwd=$(grep "^dashboard_pwd" "${str_program_dir}/${program_config_file}")
+        local verify_kcp_bind_port=$(grep "^kcp_bind_port" "${str_program_dir}/${program_config_file}")
+        local verify_quic_bind_port=$(grep "^quic_bind_port" "${str_program_dir}/${program_config_file}")
+        local verify_tcp_mux=$(grep "^tcp_mux" "${str_program_dir}/${program_config_file}")
+        local verify_token=$(grep "privilege_token" "${str_program_dir}/${program_config_file}")
+        local verify_allow_ports=$(grep "privilege_allow_ports" "${str_program_dir}/${program_config_file}")
+
+        if [ ! -z "$verify_dashboard_user" ] && [ ! -z "$verify_dashboard_pwd" ] && [ ! -z "$verify_kcp_bind_port" ] && [ ! -z "$verify_quic_bind_port" ] && [ ! -z "$verify_tcp_mux" ] && [ -z "$verify_token" ] && [ -z "$verify_allow_ports" ]; then
+            echo -e "${COLOR_GREEN}Update configuration file successfully!!!${COLOR_END}"
+        else
+            echo -e "${COLOR_RED}Update configuration file failed!!!${COLOR_END}"
+            exit 1
+        fi
+    fi
+}
+
+# Update frps
+update_program_server_frps() {
+    fun_frps "clear"
+
+    if [ -s "$program_init" ] || [ -s "${str_program_dir}/${program_name}" ]; then
+        echo "============== Update ${program_name} =============="
+        update_config_frps
+        checkos
+        check_os_version
+        check_os_bit
+        fun_getVer
+
+        local remote_init_version=$(wget -qO- "$FRPS_INIT" | sed -n '/^version/p' | cut -d'"' -f2)
+        local local_init_version=$(sed -n '/^version/p' "$program_init" | cut -d'"' -f2)
+        local install_shell="$strPath"
+
+        if [ -n "$remote_init_version" ] && [ "$local_init_version" != "$remote_init_version" ]; then
+            echo "========== Update ${program_name} ${program_init} =========="
+            if ! wget "$FRPS_INIT" -O "$program_init"; then
+                echo -e "${COLOR_RED}Failed to download ${program_name}.init file!${COLOR_END}" >&2
+                exit 1
+            else
+                echo -e "${COLOR_GREEN}${program_init} Update successfully !!!${COLOR_END}"
+            fi
+        fi
+
+        [ ! -d "$str_program_dir" ] && mkdir -p "$str_program_dir"
+        echo -e "Loading network version for ${program_name}, please wait..."
+        fun_getServer
+        fun_getVer >/dev/null 2>&1
+        local local_program_version="$("${str_program_dir}/${program_name}" --version 2>/dev/null || echo "0.0.0")"
+        echo -e "${COLOR_GREEN}${program_name} local version ${local_program_version}${COLOR_END}"
+        echo -e "${COLOR_GREEN}${program_name} remote version ${FRPS_VER}${COLOR_END}"
+
+        if [ "$local_program_version" != "$FRPS_VER" ]; then
+            echo -e "${COLOR_GREEN}Found a new version, updating now!!!${COLOR_END}"
+            if [ -d /etc/systemd/system ]; then
+                systemctl stop "$program_name" 2>/dev/null || true
+            else
+                "$program_init" stop 2>/dev/null || true
+            fi
+            sleep 1
+            rm -f "/usr/bin/${program_name}" "${str_program_dir}/${program_name}"
+            fun_download_file
+
+            if [ -d /etc/systemd/system ]; then
+                systemctl daemon-reload
+                systemctl enable "$program_name"
+                systemctl start "$program_name"
+            elif [ "$OS" == 'CentOS' ] || [ "$OS" == 'RHEL' ] || [ "$OS" == 'Rocky' ] || [ "$OS" == 'AlmaLinux' ]; then
+                chmod +x "$program_init"
+                chkconfig --add "$program_name"
+                "$program_init" start
+            else
+                chmod +x "$program_init"
+                update-rc.d -f "$program_name" defaults
+                "$program_init" start
+            fi
+
+            [ -s "$program_init" ] && ln -sf "$program_init" "/usr/bin/${program_name}"
+            [ ! -x "$program_init" ] && chmod 755 "$program_init"
+            echo -e "${COLOR_GREEN}${program_name} version $("${str_program_dir}/${program_name}" --version)${COLOR_END}"
+            echo -e "${COLOR_GREEN}${program_name} update successful!${COLOR_END}"
+        else
+            echo -e "${COLOR_YELLOW}No update needed, current version is up-to-date${COLOR_END}"
+        fi
+    else
+        echo -e "${COLOR_YELLOW}${program_name} is not installed!${COLOR_END}"
+    fi
+    exit 0
+}
+
+# Main script execution
+clear
+strPath=$(pwd)
+rootness
+checkos
+check_os_version "7"  # Example minimum version requirement for CentOS/RHEL
+check_os_bit
+pre_install_packs
+shell_update
+
+# Handle command-line arguments
+action="$1"
+if [ -z "$action" ]; then
+    fun_frps
+    echo -e "Arguments error! [$action]"
+    echo "Usage: $(basename "$0") {install|uninstall|update|config}"
+    exit 1
+else
+    case "$action" in
+        install)
+            pre_install_frps 2>&1 | tee "/root/${program_name}-install.log"
+            ;;
+        config)
+            configure_program_server_frps
+            ;;
+        uninstall)
+            uninstall_program_server_frps 2>&1 | tee "/root/${program_name}-uninstall.log"
+            ;;
+        update)
+            update_program_server_frps 2>&1 | tee "/root/${program_name}-update.log"
+            ;;
+        *)
+            fun_frps
+            echo -e "Arguments error! [$action]"
+            echo "Usage: $(basename "$0") {install|uninstall|update|config}"
+            exit 1
+            ;;
+    esac
+fi
