@@ -6,12 +6,12 @@
 [![Stars][stars-shield]][stars-url]
 [![Forks][forks-shield]][forks-url]
 
-[repo-shield]: https://img.shields.io/badge/GitHub-mvscode%2Ffrps--onekey-brightgreen?style=flat-square&logo=github
-[repo-url]: https://github.com/mvscode/frps-onekey
-[stars-shield]: https://img.shields.io/github/stars/mvscode/frps-onekey.svg?style=flat-square&logo=github&color=yellow
-[stars-url]: https://github.com/mvscode/frps-onekey/stargazers
-[forks-shield]: https://img.shields.io/github/forks/mvscode/frps-onekey.svg?style=flat-square&logo=github&color=green
-[forks-url]: https://github.com/mvscode/frps-onekey/network/members
+[repo-shield]: https://img.shields.io/badge/GitHub-shogunkwk%2Ffrps--onekey-brightgreen?style=flat-square&logo=github
+[repo-url]: https://github.com/shogunkwk/frps-onekey
+[stars-shield]: https://img.shields.io/github/stars/shogunkwk/frps-onekey.svg?style=flat-square&logo=github&color=yellow
+[stars-url]: https://github.com/shogunkwk/frps-onekey/stargazers
+[forks-shield]: https://img.shields.io/github/forks/shogunkwk/frps-onekey.svg?style=flat-square&logo=github&color=green
+[forks-url]: https://github.com/shogunkwk/frps-onekey/network/members
 
 
 *Frp 是一个高性能的反向代理应用，可以帮助您轻松地进行内网穿透，对外网提供服务，支持 tcp, http, https 等协议类型，并且 web 服务支持根据域名进行路由转发。*
@@ -25,13 +25,13 @@
 
 #### Gitee
 ```Bash
-wget https://gitee.com/mvscode/frps-onekey/raw/master/install-frps.sh -O ./install-frps.sh
+wget https://gitee.com/shogunkwk/frps-onekey/raw/master/install-frps.sh -O ./install-frps.sh
 chmod 700 ./install-frps.sh
 ./install-frps.sh install
 ```
 #### Github
 ```Bash
-wget https://raw.githubusercontent.com/mvscode/frps-onekey/master/install-frps.sh -O ./install-frps.sh
+wget https://raw.githubusercontent.com/shogunkwk/frps-onekey/master/install-frps.sh -O ./install-frps.sh
 chmod 700 ./install-frps.sh
 ./install-frps.sh install
 ```
@@ -57,7 +57,7 @@ Usage: /etc/init.d/frps {start|stop|restart|status|config|version}
 
 #### Added
 * Add progress bar for download frps tar file 
-[Issue 101](https://github.com/mvscode/frps-onekey/issues/101)
+[Issue 101](https://github.com/shogunkwk/frps-onekey/issues/101)
 
 #### Fixed
 * fix typo
@@ -98,7 +98,7 @@ Usage: /etc/init.d/frps {start|stop|restart|status|config|version}
 * Amend function name to frps
 
 #### Changed
-* Change curl command to get server ip from wget command [Issue 117](https://github.com/mvscode/frps-onekey/issues/117)
+* Change curl command to get server ip from wget command [Issue 117](https://github.com/shogunkwk/frps-onekey/issues/117)
 
 ### [1.0.2] - 2024-06-13
 
@@ -115,14 +115,3 @@ Usage: /etc/init.d/frps {start|stop|restart|status|config|version}
 
 #### Changed
 * frps program config file change to frps.toml from frps.int
-
-
-
-
-
-
-
- 
-
- 
-  
